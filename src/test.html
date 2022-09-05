@@ -1,0 +1,438 @@
+<p><link href="https://meloman.kz/media/stories/dist/zuck.min.css" rel="stylesheet" /></p>
+<!-- lib skins -->
+<p><link href="https://meloman.kz/media/stories/dist/skins/snapgram.css" rel="stylesheet" /> <link href="https://meloman.kz/media/stories/dist/skins/vemdezap.css" rel="stylesheet" /> <link href="https://meloman.kz/media/stories/dist/skins/facesnap.css" rel="stylesheet" /> <link href="https://meloman.kz/media/stories/dist/skins/snapssenger.css" rel="stylesheet" /></p>
+<script src="https://meloman.kz/media/stories/dist/zuck.min.js" type="text/javascript" xml="space"></script>
+<script src="https://meloman.kz/media/stories/dist/script.js" type="text/javascript" xml="space"></script>
+ <div class="udr__st">
+<div id="stories" class="storiesWrapper" style="text-align: center; padding: 0 20px;" data-story-id="1,2,3,4,5,6,7"></div>
+<div id="story_products">
+<div class="container">
+<div class="swiper-container slider">
+<div class="swiper-wrapper">
+<div class="swiper-slide"></div>
+</div>
+</div>
+</div>
+</div>
+</div> 
+
+
+
+
+
+
+
+<div class="mrgn__b3"></div>
+<script type="text/javascript" xml="space">// <![CDATA[
+    require([
+        'jquery',
+        'Amasty_ShopbyBase/js/swiper.min'
+
+    ], function ($, Swiper) {
+        var allContents = new Array();
+        var storiesId = $('#stories').data('story-id').split(',');
+
+        var PRODUCT_SWIPER = new Swiper('#story_products .swiper-container', {
+            spaceBetween: 20,
+            slidesPerView: 9.3,
+            centeredSlides: false,
+            slidesPerGroup: 1,
+            loop: false,
+            breakpoints: {
+                1460: {
+                    slidesPerView: 7.3
+                },
+                1280: {
+                    slidesPerView: 6.3
+                },
+                960: {
+                    slidesPerView: 4.3
+                },
+                767: {
+                    slidesPerView: 2.3
+                },
+            },
+            on: {
+                init: function () {
+                    console.log('Init slider');
+                },
+                slideChange: function () {
+                }
+            },
+        });
+
+        var storiesId = $('#stories').data('story-id').split(',');
+
+        $.ajax({
+            url: '/stories/all',
+            data: {
+                story_ids: storiesId
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                const stories = [];
+                for (const item of response.items) {
+                    const content = [];
+                    allContents = allContents.concat(item.contents);
+                    for (const [key, value] of Object.entries(item.contents)) {
+
+                        const type = value.type == 'video' ? 'video' : 'photo';
+                        const linkText = Object.keys(value.products).length ? 'Показать товары' : 'Перейти';
+                        const link = Object.keys(value.products).length ? value.content_id : value.link;
+                        content.push([value.content_id, type, 3, value.content_path, false, link, linkText, false, false])
+                    }
+
+                    stories.push(Zuck.buildTimelineItem(
+                        item.name,
+                        item.thumbnail,
+                        item.name,
+                        "",
+                        '',
+                        content
+                    ))
+
+                }
+
+                console.log(window.location);
+                console.log(location.href);
+
+    
+                initStories(stories);
+            },
+            error: function (response) {
+                console.error(response)
+            }
+        });
+
+        const listenObjectIds = new Array();
+
+        function initMuteButton() {
+            const activeItemHeader = $('#zuck-modal-content .story-viewer .head');
+            activeItemHeader.find('.muter').remove();
+            activeItemHeader.append(`<div class="muter">
+                <span class="unmuted"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" width viewBox="0 0 640 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M412.6 182c-10.28-8.334-25.41-6.867-33.75 3.402c-8.406 10.24-6.906 25.35 3.375 33.74C393.5 228.4 400 241.8 400 255.1c0 14.17-6.5 27.59-17.81 36.83c-10.28 8.396-11.78 23.5-3.375 33.74c4.719 5.806 11.62 8.802 18.56 8.802c5.344 0 10.75-1.779 15.19-5.399C435.1 311.5 448 284.6 448 255.1S435.1 200.4 412.6 182zM473.1 108.2c-10.22-8.334-25.34-6.898-33.78 3.34c-8.406 10.24-6.906 25.35 3.344 33.74C476.6 172.1 496 213.3 496 255.1s-19.44 82.1-53.31 110.7c-10.25 8.396-11.75 23.5-3.344 33.74c4.75 5.775 11.62 8.771 18.56 8.771c5.375 0 10.75-1.779 15.22-5.431C518.2 366.9 544 313 544 255.1S518.2 145 473.1 108.2zM534.4 33.4c-10.22-8.334-25.34-6.867-33.78 3.34c-8.406 10.24-6.906 25.35 3.344 33.74C559.9 116.3 592 183.9 592 255.1s-32.09 139.7-88.06 185.5c-10.25 8.396-11.75 23.5-3.344 33.74C505.3 481 512.2 484 519.2 484c5.375 0 10.75-1.779 15.22-5.431C601.5 423.6 640 342.5 640 255.1S601.5 88.34 534.4 33.4zM301.2 34.98c-11.5-5.181-25.01-3.076-34.43 5.29L131.8 160.1H48c-26.51 0-48 21.48-48 47.96v95.92c0 26.48 21.49 47.96 48 47.96h83.84l134.9 119.8C272.7 477 280.3 479.8 288 479.8c4.438 0 8.959-.9314 13.16-2.835C312.7 471.8 320 460.4 320 447.9V64.12C320 51.55 312.7 40.13 301.2 34.98z"/></svg>
+                </span>
+                <span class="muted"> 
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M320 64v383.1c0 12.59-7.337 24.01-18.84 29.16C296.1 479.1 292.4 480 288 480c-7.688 0-15.28-2.781-21.27-8.094l-134.9-119.9H48c-26.51 0-48-21.49-48-47.1V208c0-26.51 21.49-47.1 48-47.1h83.84l134.9-119.9c9.422-8.375 22.93-10.45 34.43-5.259C312.7 39.1 320 51.41 320 64z"/></svg>
+                </span>
+                </div>`);
+
+            const muterEl = $('#zuck-modal-content .muter');
+            muterEl.off("click");
+
+            muterEl.on('click', (e) => {
+                if ($('#zuck-modal-content .story-viewer').hasClass('muted')) {
+                    $('#zuck-modal-content .story-viewer').removeClass('muted');
+                    $('#zuck-modal-content .item video').prop('muted', false)
+                } else {
+                    $('#zuck-modal-content .story-viewer').addClass('muted');
+                    $('#zuck-modal-content .item video').prop('muted', true)
+                }
+
+
+            })
+
+        }
+
+        function initShowProductsListener() {
+            const link = $("#zuck-modal-content a.tip.link:contains('Показать товары')");
+            $('#story_products').removeClass('show') // @todo uncomment
+
+            if (!link.length) return;
+
+            link.off("click");
+
+            link.on("click", (e) => {
+                e.preventDefault();
+                $(e.currentTarget).attr('href');
+                showProducts(Number($(e.currentTarget).attr('href')));
+            });
+        }
+
+        function showProducts(contentId) {
+
+            let currentContent;
+            for (const content of allContents) {
+                if (content.content_id != contentId) continue;
+                currentContent = content;
+                break;
+            }
+
+            let perStoryHtmlProducts = ``;
+
+            for (const product of Object.values(currentContent.products)) {
+
+                let price = product.special_price < product.price && product.special_price != null ? product.special_price : product.price;
+                let oldPrice = product.old_price ?? 0;
+                let canShowOldPrice = oldPrice > price;
+                let thumbnail = product.thumbnail != null ? `/media/catalog/product${product.thumbnail}` : '/media/catalog/product/placeholder/default/Selection_01222_8.png';
+
+                perStoryHtmlProducts += `
+                                    <div class="swiper-slide" data-content-id="${currentContent.content_id}">
+                                        <a href="/${product.url_key}.html">
+                                            <div class="product_content">
+                                                <div class="product_image">
+                                                    <img class="product_thumbnail" src="${thumbnail}">
+                                                </div>
+                                                <p class="product_name">${product.name}</p>
+                                            </div>
+                                            <div class="price_content">`
+                if (canShowOldPrice) {
+                    perStoryHtmlProducts += `<div class="old_price">
+                                                                    <span>${parseInt(oldPrice)}</span> ₸   
+                                                                </div>`;
+                }
+                perStoryHtmlProducts += `
+                                    <div class="price">
+                                        <span>${parseInt(price)}</span> ₸   
+                                    </div>
+                                    </div>
+                                        </a>
+                                    </div>
+                                    `
+            }
+
+            $('#story_products .swiper-container .swiper-wrapper').empty();
+            $('#story_products .swiper-container .swiper-wrapper').append(perStoryHtmlProducts);
+            $('#story_products').addClass('show');
+            $("#story_products").appendTo("body");
+            PRODUCT_SWIPER.update();
+            setTimeout(() => {
+                const containerHeight = $("#story_products").outerHeight();
+                $("#story_products.show").css({ 'top': `calc(100vh - ${containerHeight}px)` });
+                $("#story_products.show").css({ 'height': `${containerHeight}px` });
+            }, 300)
+        }
+
+        function initStories(stories) {
+            var currentSkin = getCurrentSkin();
+            var stories = new Zuck('stories', {
+                backNative: true,
+                previousTap: true,
+                skin: currentSkin['name'],
+                autoFullScreen: currentSkin['params']['autoFullScreen'],
+                avatars: currentSkin['params']['avatars'],
+                paginationArrows: true,
+                list: currentSkin['params']['list'],
+                cubeEffect: true,
+                reactive: false,
+                localStorage: true,
+                stories,
+                language: {
+                    unmute: ''
+                },
+                callbacks: {
+                    onOpen(storyId, callback) {
+                        initShowProductsListener();
+                        initMuteButton();;
+                        $('body').css({ 'overflow': 'hidden' })
+                        callback();  // on open story viewer
+                    },
+
+                    onView(storyId) {
+                        initShowProductsListener();
+                        initMuteButton();
+                    },
+
+                    onEnd(storyId, callback) {
+                        initShowProductsListener();
+                        initMuteButton();
+                        callback();  // on end story
+                    },
+                    onClose(storyId, callback) {
+                        $('body').css({ 'overflow': 'auto' })
+                        callback();  // on end story
+                    },
+
+                    onNavigateItem(storyId, nextStoryId, callback) {
+                        initShowProductsListener();
+                        initMuteButton();
+                        callback();  // on navigate item of story
+                    },
+
+                    onDataUpdate(currentState, callback) {
+                        initShowProductsListener();
+                        initMuteButton();
+                        callback(); // use to update state on your reactive framework
+                    }
+                },
+            });
+        }
+    })
+// ]]></script>
+<style xml="space"><!--
+   
+
+ .udr__st {
+            height: 26vw;
+        }
+
+
+ @media (min-width: 600px) {
+            .udr__st{
+                height: 14vw;
+                position: relative;
+            }
+        }
+    
+ @media (min-width: 800px) {
+            .udr__st{
+                height: 11vw;
+                position: relative;
+            }
+        }
+    
+ @media (min-width: 900px) {
+            .udr__st{
+                height: 10vw;
+                position: relative;
+            }
+        }
+        @media (min-width: 1024px),
+    
+        print {
+            .udr__st {
+                height: 8vw;
+            }
+}
+     
+  @media (min-width: 1250px),
+    
+        print {
+            .udr__st {
+                height: 7vw;
+            }
+}
+  @media (min-width: 1600px),
+    
+        print {
+            .udr__st {
+                height: 5vw;
+            }
+}
+ @media (min-width: 2100px),
+    
+        print {
+            .udr__st {
+                height: 4vw;
+            }
+}
+ @media (min-width: 2600px),
+    
+        print {
+            .udr__st {
+                height: 3vw;
+            }
+}
+ #zuck-modal .time {
+        display: none !important;
+    }
+
+    #zuck-modal-content .story-viewer .slides .item {
+        background: rgb(0 0 0 / .9)!important;
+    }
+
+    #zuck-modal .muter svg {
+        width: 20px;
+        height: 20px;
+        fill: #fff;
+    }
+
+    .story-viewer .muter {
+        display: inline;
+        position: absolute;
+        left: 10px;
+        top: 50px;
+        cursor: pointer;
+        z-index: 10000000;
+    }
+
+    .story-viewer.muted .muter .muted {
+        display: inline;
+    }
+
+    .story-viewer.muted .muter .unmuted {
+        display: none;
+    }
+
+    .story-viewer:not(.muted) .muter .muted {
+        display: none;
+    }
+
+    .story-viewer:not(.muted) .muter .unmuted {
+        display: inline;
+    }
+
+    #zuck-modal .back {
+        color: #fff;
+    }
+   #zuck-modal-content .story-viewer .head .right .close
+   {
+    color: #fff;
+   }
+
+    #story_products {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: fit-content;
+        top: calc(100vh + 500px);
+        visibility: hidden;
+        z-index: 11111111111111;
+        background: #fff;
+    }
+
+    #story_products.show .container .swiper-container {
+        width: unset !important;
+        left: unset !important;
+        position: unset !important;
+        margin: 0 !important;
+        height: inherit;
+    }
+
+    #story_products.show .container {
+        height: inherit;
+    }
+
+    #story_products.show .container .swiper-container .swiper-wrapper {
+        padding: 10px;
+        height: calc(100% - 20px);
+    }
+
+    #story_products.show {
+        bottom: 0;
+        visibility: visible;
+    }
+
+    #story_products .swiper-slide .product_name {
+        height: 40px;
+        overflow: hidden;
+    }
+
+    #story_products .swiper-slide .product_content {
+        height: calc(100% - 40px);
+    }
+
+    #story_products .swiper-slide .product_content .product_image {
+        height: calc(100% - 70px);
+    }
+
+    #story_products .swiper-slide .price_content {
+        height: 40px;
+    }
+
+    @media only screen and (min-width: 1024px) {
+        .story-viewer .muter {
+            top: 55px;
+            left: 22px;
+        }
+    }
+
+    @media  (max-width: 1024px) ,print{
+        .mrgn__b3{
+            margin-bottom:15px;
+        }
+    }
+--></style>
